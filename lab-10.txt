@@ -1,0 +1,102 @@
+--------------------------index.js----------------------------
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>LAB PROGRAM 10 TO Display Stock Details</h1>
+    <div id="stock"></div>
+    <script>
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then((e) => {
+                    if (e.active === null) {
+                        console.log("registered")
+                    }
+                });
+        } else {
+            console.log("browser does not support service worker");
+        }
+
+        fetch("data.json")
+            .then((res) => {
+                return res.json();
+            })
+            .then((stock) => {
+                var table = "<table>";
+                table +=
+
+                    "<tr><th>Company</th><th>Description</th><th>Initial Price</th><th>Price in 2000</th><th>Current Price</th></tr>";
+                for (item of stock) {
+                    table +=
+
+                        "<tr><td>" + item.name + "</td><td>" + item.desc + "</td><td>" + item.initial_price + "</td><td>" + item.price_2000 + "</td><td>" + item.price_now + "</td></tr>";
+
+                }
+                table += "</table>";
+                document.getElementById("stock").innerHTML = table;
+
+            })
+
+
+
+
+
+    </script>
+</body>
+
+</html>
+
+--------------------------sw.js----------------------------
+let mycache = "mycache";
+
+let assests = [
+    "/",
+    "/icons/rvlogo.png",
+    "/icons/rvlogo2.jpeg",
+    "/index.html",
+    "/manifest.json",
+    "/sw.js"
+]
+
+self.addEventListener('install', _event => {
+    console.log('inside installation', _event);
+    caches.open(mycache)
+        .then(cache => {
+            cache.addAll(assests);
+        });
+});
+
+self.addEventListener('activate', _event => {
+    console.log('inside activation', _event);
+});
+
+self.addEventListener('fetch', async (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(respevt => {
+                return respevt || fetch(event.request);
+
+            })
+    );
+    console.log('inside the fetched', event);    
+});
+

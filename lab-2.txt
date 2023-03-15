@@ -1,0 +1,76 @@
+-----------------------MainActivity----------------------
+package com.example.lab_2;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.Switch;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button btn = findViewById(R.id.button);
+        Switch switch1 = findViewById(R.id.switch1);
+        btn.setEnabled(false);
+
+        ConstraintLayout layout = findViewById(R.id.layout);
+        CalendarView cal = new CalendarView(this);
+        switch1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(switch1.isChecked()){
+                    btn.setEnabled(true);
+                    layout.addView(cal);
+                    cal.setForegroundGravity(30);
+                    Toast.makeText(MainActivity.this,"Button Enabled",Toast.LENGTH_LONG).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this,"Button Disabled",Toast.LENGTH_LONG).show();
+                    btn.setEnabled(false);
+                    layout.removeView(cal);
+                    if(btn.isHovered()){
+                        Toast.makeText(MainActivity.this, "Enable button to click", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+
+    }
+}
+
+------------------------------buttonbg.xml-----------------
+<item android:state_pressed="true"
+        android:drawable="@drawable/shape" />
+
+    <item android:state_pressed="false"
+        android:drawable="@color/black">
+    </item>
+
+    <item android:state_hovered="true"
+        android:drawable="@color/black">
+    </item>
+
+-------------------shape.xml-------------------
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+<gradient
+    android:angle="45"
+    android:startColor="#53C8A6"
+    android:endColor="#6913E1"
+    android:type="linear">
+
+</gradient>
+
+    <corners
+        android:radius="20dp">
+    </corners>
+</shape>

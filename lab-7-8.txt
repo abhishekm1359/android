@@ -1,0 +1,96 @@
+---------------------log.js------------------------
+localStorage.setItem("username" , "rvce");
+localStorage.setItem("password" , "rvce");
+
+function verify(){
+
+    let user = localStorage.getItem("username");
+    let pass = localStorage.getItem("password");
+
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    console.log(user,pass,username,password);
+
+    if(username == user && password == pass){
+        alert("Authentication Success");
+        window.open("../second.html");
+    }else{
+        alert("Authentication Failed")
+    }
+
+
+}
+
+----------------start.js-------------------
+if('serviceWorker' in navigator){
+    navigator.serviceWorker.register("/sw.js")
+    .then((reg)=>console.log("registered" , reg))
+    .catch((err)=>console.log("err" , err));
+}else{
+    console.log('No service worker support in browser');
+}
+
+-----------------manifest.json------------------------
+{
+    "name" : "First_Manifest",
+    "short_name" : "manifest",
+    "description" : "Building PWA application with login authentication",
+    "display" : "fullscreen",
+    "orientation" : "portrait-primary",
+    "start_url" : "/first.html",
+    "background_color" : "#ffff00",
+    "theme_color" : "#145644",
+    "icons" : [
+    {
+        "src" : "/icons/rvlogo.png",
+        "sizes" : "316x316",
+        "type" : "image/png"
+
+    },
+    {
+        "src" : "/icons/rvlogo2.jpeg",
+        "sizes" : "108x108",
+        "type" : "image/jpeg"
+
+    }
+]
+}
+-----------------------------sw.js-------------------------------
+let mycache = "mycache";
+
+let assests = [
+    "/",
+    "/icons/rvlogo.png",
+    "/icons/rvlogo2.jpeg",
+    "/js/log.js",
+    "/js/start.js",
+    "/first.html",
+    "/manifest.json",
+    "/second.html",
+    "/sw.js"
+]
+
+self.addEventListener('install', _event => {
+    console.log('inside installation', _event);
+    caches.open(mycache)
+        .then(cache => {
+            cache.addAll(assests);
+        });
+});
+
+self.addEventListener('activate', _event => {
+    console.log('inside activation', _event);
+});
+
+self.addEventListener('fetch', async (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(respevt => {
+                return respevt || fetch(event.request);
+
+            })
+    );
+    console.log('inside the fetched', event);
+});
+
